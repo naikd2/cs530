@@ -37,7 +37,7 @@ public class WelcomeController {
 		return welcome();
 	}
 
-	@RequestMapping(value = "/center", consumes = "application/json", method = RequestMethod.POST)
+	@RequestMapping(value = "/center", method = RequestMethod.POST)
 	public ModelAndView center(@ModelAttribute Point point) {
 		return welcome();
 	}
