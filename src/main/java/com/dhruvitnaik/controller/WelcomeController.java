@@ -33,7 +33,6 @@ public class WelcomeController {
 	public ModelAndView dropPin(@ModelAttribute Pin pin) {
 		pin.setId(IdGenerator.INSTANCE.getNextPinId());
 		pinDao.save(pin);
-
 		return welcome();
 	}
 

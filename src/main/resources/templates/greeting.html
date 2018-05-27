@@ -39,7 +39,7 @@
             <input id="lngPoint" class="form-control" type="hidden" th:field="*{longitude}" value=""/>
         </div>
         <div class="center-map-footer">
-            <p><input id="centerMap" type="submit" class="btn btn-primary"  value="Submit" /></p>
+            <p><input id="centerMap" type="submit" class="btn btn-primary"  value="Center Map to Current Location" /></p>
         </div>
     </form>
 </div>
@@ -59,8 +59,9 @@
             </div>
             <form action="#" th:action="@{/dropPin}" th:object="${pin}" method="post">
                 <div class="modal-body">
-                    <p>Message: <input id="latLng" class="form-control" type="hidden" th:field="*{latlng}" value=""/></p>
-                </div>
+                    <input id="latPin" class="form-control" type="hidden" th:field="*{latitude}" value=""/>
+                    <input id="lngPin" class="form-control" type="hidden" th:field="*{longitude}" value=""/>
+                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary">Save changes</button>
@@ -94,14 +95,9 @@
     function onMapClick(e) {
         var pinModel =  $('#exampleModal');
         pinModel.modal('show');
-        pinModel.find('.modal-body #latLng').val(e.latlng);
-//        var inputLatLng = pinModel.find('latLng');
-//        inputLatLng.value = e.latlng;
+        pinModel.find('.modal-body #latPin').val(e.latlng.lat);
+        pinModel.find('.modal-body #lngPin').val(e.latlng.lng);
 
-//        popup
-//            .setLatLng(e.latlng)
-//            .setContent("You clicked the map at " + e.latlng.toString())
-//            .openOn(mymap);
     }
 
     function setCenterMap(e) {
