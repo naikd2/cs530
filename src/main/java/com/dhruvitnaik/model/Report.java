@@ -15,6 +15,8 @@ public class Report implements Serializable {
 
 	private String description;
 
+	private Long map;
+
 	public Report() {
 		// pdx
 	}
@@ -39,28 +41,13 @@ public class Report implements Serializable {
 		this.description = description;
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-
-		if (o == null || getClass() != o.getClass()) return false;
-
-		Report report = (Report) o;
-
-		return new EqualsBuilder()
-				.append(getName(), report.getName())
-				.append(getDescription(), report.getDescription())
-				.isEquals();
+	public Long getMap() {
+		return map;
 	}
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(17, 37)
-				.append(getName())
-				.append(getDescription())
-				.toHashCode();
+	public void setMap(Long map) {
+		this.map = map;
 	}
-
 }
 
 //	@Id

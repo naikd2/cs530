@@ -18,7 +18,23 @@ public class Pin implements Serializable {
 
 	private Double longitude;
 
-	private String latlng;
+
+	/*
+
+	Person Info
+	Age
+	Sex
+	Alias
+	Symptoms
+	Location Info
+	Name
+	Indoor/Outdoor
+	Weather
+	Climate
+	// option for search for location as well as drop
+
+
+	 */
 
 	public Pin() {
 	}
@@ -47,11 +63,4 @@ public class Pin implements Serializable {
 		this.longitude = longitude;
 	}
 
-	public String getLatlng() {
-		return latlng;
-	}
-
-	public void setLatlng(String latlng) {
-		this.latlng = latlng;
-	}
 }

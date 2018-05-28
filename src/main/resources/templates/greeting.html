@@ -33,7 +33,8 @@
 </head>
 <body>
 <div>
-    <form action="#" th:action="@{/center}" th:object="${point}" method="post">
+    <span th:text="${report.name}">
+    <form action="#" th:action="@{/{rName}/center(rName=${report.name})}" th:object="${point}" method="post">
         <div class="center-map-body">
             <input id="latPoint" class="form-control" type="hidden" th:field="*{latitude}" value=""/>
             <input id="lngPoint" class="form-control" type="hidden" th:field="*{longitude}" value=""/>
@@ -57,7 +58,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="#" th:action="@{/dropPin}" th:object="${pin}" method="post">
+            <form action="#" th:action="@{/{rName}/drop(rName=${report.name})}" th:object="${pin}" method="post">
                 <div class="modal-body">
                     <input id="latPin" class="form-control" type="hidden" th:field="*{latitude}" value=""/>
                     <input id="lngPin" class="form-control" type="hidden" th:field="*{longitude}" value=""/>
@@ -78,6 +79,8 @@
 
 <script>
 
+    var showtext = "[[${map.getLatitude()}]]";
+    console.log(showtext);
     var mymap = L.map('mapid').setView([51.505, -0.09], 13);
 
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
@@ -97,7 +100,6 @@
         pinModel.modal('show');
         pinModel.find('.modal-body #latPin').val(e.latlng.lat);
         pinModel.find('.modal-body #lngPin').val(e.latlng.lng);
-
     }
 
     function setCenterMap(e) {
