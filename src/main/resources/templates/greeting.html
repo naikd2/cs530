@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Getting Started: Serving Web Content</title>
+    <title>Disease Reports</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
     <link rel="stylesheet" href="/webjars/leaflet/1.3.1/leaflet.css"/>
@@ -10,50 +10,167 @@
     <script src="/webjars/leaflet/1.3.1/leaflet.js"></script>
     <script src="/webjars/jquery/3.0.0/jquery.min.js"></script>
     <script src="/webjars/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <script src="/webjars/feather-icons/4.7.0/dist/feather.min.js"></script>
 
     <style type="text/css">
-        .container-full {
-            position: absolute;
-            bottom: 0px;
-            top: 50px;
-            width: 100%;
-            overflow: auto;
+        html {
+            position: relative;
+            min-height: 100%;
         }
-
-        #mapid {
+        [role="main"] {
+            padding: 60px 15px 0;
+        }
+        #pinModal {
+            padding: 60px 15px 0;
+        }
+        #reportModal {
+            padding: 60px 15px 0;
+        }
+        #helpModal {
+            padding: 60px 15px 0;
+        }
+        #map {
+            width: 600px;
+            height:500px;
+            min-height: 100%;
+            min-width: 100%;
+            display: block;
+        }
+        #map-holder{
+            height: 100%;
+        }
+        .fill {
+            min-height: 100%;
             height: 100%;
             width: 100%;
+            max-width: 100%;
         }
-
+        .container{
+            max-width:60em;
+            padding: 0.2em;
+        }
         .navbar {
             z-index: 10000;
         }
-
+        .sidebar {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100; /* Behind the navbar */
+            padding: 48px 0 0; /* Height of navbar */
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+        }
+        .sidebar-sticky {
+            position: relative;
+            top: 0;
+            height: calc(100vh - 48px);
+            padding-top: .5rem;
+            overflow-x: hidden;
+            overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+        }
     </style>
 </head>
 <body>
-<div>
-    <span th:text="${report.name}">
-    <form action="#" th:action="@{/{rName}/center(rName=${report.name})}" th:object="${point}" method="post">
-        <div class="center-map-body">
-            <input id="latPoint" class="form-control" type="hidden" th:field="*{latitude}" value=""/>
-            <input id="lngPoint" class="form-control" type="hidden" th:field="*{longitude}" value=""/>
-        </div>
-        <div class="center-map-footer">
-            <p><input id="centerMap" type="submit" class="btn btn-primary"  value="Center Map to Current Location" /></p>
-        </div>
-    </form>
-</div>
-<div class="container-full">
-    <div id="mapid"></div>
-</div>
+
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="#">Disease Reports</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbar">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<nav class="col-md-2 d-none d-md-block bg-light sidebar">
+    <div class="sidebar-sticky">
+        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+            <span>Reports</span>
+            <a class="d-flex align-items-center text-muted" href="#" data-toggle="modal" data-target="#reportModal">
+                <span data-feather="plus-circle"></span>
+            </a>
+        </h6>
+        <ul class="nav flex-column mb-2">
+            <li class="nav-item" th:each="r : ${reports}">
+                <a class="nav-link" href="#" th:href="@{/{rName}/show(rName=${r.name})}" role="button"  th:text="${r.name}">Report</a>
+            </li>
+        </ul>
+    </div>
+</nav>
 
 
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2"> Dashboard :
+            <span th:text="${report.name}"></span>
+            <a class="d-flex align-items-center text-muted" href="#" data-toggle="modal" data-target="#helpModal">
+                <span data-feather="help-circle"></span>
+            </a>
+        </h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div id="center-map" class="btn-group mr-2">
+                <a href="#" th:href="@{/{rName}/criteria(rName=${report.name})}" class="btn btn-sm btn-outline-secondary" role="button">Criteria Filter</a>
+
+                <form action="#" th:action="@{/{rName}/center(rName=${report.name})}" th:object="${point}" method="post">
+                        <input id="latPoint" class="form-control" type="hidden" th:field="*{latitude}" value=""/>
+                        <input id="lngPoint" class="form-control" type="hidden" th:field="*{longitude}" value=""/>
+                        <input id="centerMap" type="submit" class="btn btn-sm btn-outline-secondary"  value="Center Map" />
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="map-holder">
+        <div class="container fill">
+            <div id="map"></div>
+        </div>
+    </div>
+
+        <h2>Incidents</h2>
+    <div class="table-responsive">
+        <table class="table table-striped table-sm">
+            <thead>
+            <tr>
+                <th>Alias</th>
+                <th>Sex</th>
+                <th>Age</th>
+                <th>Symptoms</th>
+                <th>Location</th>
+                <th>Climate</th>
+                <th>Result</th>
+                <th>Delete</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="p : ${pins}">
+                <td th:text="${p.alias}">Attribute</td>
+                <td th:text="${p.sex}">Attribute</td>
+                <td th:text="${p.age}">Attribute</td>
+                <td th:text="${p.symptoms}">Attribute</td>
+                <td th:text="${p.location}">Attribute</td>
+                <td th:text="${p.climate}">Attribute</td>
+                <td th:text="${p.result}">Attribute</td>
+                <td>
+                    <a href="#" th:href="@{/{rName}/pin/delete/{id}(rName=${report.name}, id=${p.id})}" class="btn btn-sm btn-outline-secondary" role="button">
+                        <span data-feather="trash-2"></span>
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+
+<div class="modal fade" id="pinModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <h5 class="modal-title" id="modalLabel">Drop Pin</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -62,26 +179,120 @@
                 <div class="modal-body">
                     <input id="latPin" class="form-control" type="hidden" th:field="*{latitude}" value=""/>
                     <input id="lngPin" class="form-control" type="hidden" th:field="*{longitude}" value=""/>
-                 </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-alias">Alias</span>
+                        </div>
+                        <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" th:field="*{alias}">
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sex">Sex</span>
+                        </div>
+                        <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sex" th:field="*{sex}">
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-age">Age</span>
+                        </div>
+                        <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-age" th:field="*{age}">
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-symptoms">Symptoms</span>
+                        </div>
+                        <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-symptoms" th:field="*{symptoms}">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-location">Location</span>
+                        </div>
+                        <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-location" th:field="*{location}">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-climate">Climate</span>
+                        </div>
+                        <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-climate" th:field="*{climate}">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-result">Result</span>
+                        </div>
+                        <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-result" th:field="*{result}">
+                    </div>
+                </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                    <p><input type="submit" value="Submit" /></p>
+                    <button type="submit" class="btn btn-primary" value="Submit" >Save changes</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-
-
-
-
+<div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="reportModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reportModalLabel">Create Report</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="#" th:action="@{/create}" th:object="${newReport}" method="post">
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-default">Name</span>
+                        </div>
+                        <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" th:field="*{name}">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" value="Submit" >Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="helpModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="helpModalLabel">Need Help?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+                <div class="modal-body">
+                    <li class="list-group-item">Click and drag to move focus of Map</li>
+                    <li class="list-group-item">Right click on Map to drop Pin</li>
+                    <li class="list-group-item">Click on Pin for more details</li>
+                    <li class="list-group-item">Click on Center Map to save focus of Map</li>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+        </div>
+    </div>
+</div>
 <script>
+    // For Feather Icon library
+    feather.replace();
 
-    var showtext = "[[${map.getLatitude()}]]";
-    console.log(showtext);
-    var mymap = L.map('mapid').setView([51.505, -0.09], 13);
+    var latitude = "[[${map.getLatitude()}]]";
+    var longitude = "[[${map.getLongitude()}]]";
+
+
+    var mymap = L.map('map').setView([latitude, longitude], 13);
+    var pinsJson = "[[${pinJson}]]";
+    var pins = JSON.parse(pinsJson.replace(/&quot;/g,'"'));
+
 
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
         maxZoom: 18,
@@ -91,21 +302,34 @@
         id: 'mapbox.streets'
     }).addTo(mymap);
 
-    var popup = L.popup();
+
+    pins.forEach(function(pin) {
+        if (pin.broadstreetPump) {
+            L.marker([pin.latitude, pin.longitude]).addTo(mymap).bindPopup("You found the cause of the disease.");
+        } else {
+            L.marker([pin.latitude, pin.longitude]).addTo(mymap).bindPopup(
+                "Alias: " + pin.alias + "<br />" +
+                "Sex: " + pin.sex + "<br />" +
+                "Age: " + pin.age + "<br />" +
+                "Symptoms: " + pin.symptoms + "<br />" +
+                "Location: " + pin.location + "<br />" +
+                "Climate " + pin.climate + "<br />" +
+                "Result: " + pin.result + "<br />");
+        }
+    });
 
     var centerButton = $('#centerMap');
 
     function onMapClick(e) {
-        var pinModel =  $('#exampleModal');
+        var pinModel =  $('#pinModal');
         pinModel.modal('show');
         pinModel.find('.modal-body #latPin').val(e.latlng.lat);
         pinModel.find('.modal-body #lngPin').val(e.latlng.lng);
     }
 
     function setCenterMap(e) {
-        var centerForm =  $('.center-map-body');
+        var centerForm =  $('#center-map');
         var center = mymap.getCenter();
-
         centerForm.find('#latPoint').val(center.lat);
         centerForm.find('#lngPoint').val(center.lng);
     }

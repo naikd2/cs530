@@ -6,6 +6,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.gemfire.mapping.annotation.Region;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Region(value = "Report")
 public class Report implements Serializable {
@@ -16,6 +18,8 @@ public class Report implements Serializable {
 	private String description;
 
 	private Long map;
+
+	private List<Long> criteria = new ArrayList<>(5);
 
 	public Report() {
 		// pdx
@@ -48,6 +52,15 @@ public class Report implements Serializable {
 	public void setMap(Long map) {
 		this.map = map;
 	}
+
+	public List<Long> getCriteria() {
+		return criteria;
+	}
+
+	public void setCriteria(List<Long> criteria) {
+		this.criteria = criteria;
+	}
+
 }
 
 //	@Id

@@ -1,20 +1,17 @@
 package com.dhruvitnaik.dao;
 
-
-import com.dhruvitnaik.model.Report;
+import com.dhruvitnaik.model.Filter;
+import com.dhruvitnaik.model.Map;
 import org.springframework.data.gemfire.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
-import java.util.List;
 
 @Repository
-public interface ReportDao extends CrudRepository<Report, String> {
+public interface FilterDao extends CrudRepository<Filter, Long> {
 
-	Report findByName(String name);
-
-	@Query("SELECT * FROM /Report")
-	List<Report> getAll();
+	@Query("SELECT * FROM /Filter")
+	Collection<Filter> getAll();
 
 }

@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.gemfire.mapping.annotation.Region;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Region(value = "Pin")
 public class Pin implements Serializable {
@@ -18,23 +19,21 @@ public class Pin implements Serializable {
 
 	private Double longitude;
 
+	private String alias;
 
-	/*
+	private String sex;
 
-	Person Info
-	Age
-	Sex
-	Alias
-	Symptoms
-	Location Info
-	Name
-	Indoor/Outdoor
-	Weather
-	Climate
-	// option for search for location as well as drop
+	private Double age;
 
+	private String symptoms;
 
-	 */
+	private String location;
+
+	private String climate;
+
+	private String result;
+
+	private boolean broadstreetPump;
 
 	public Pin() {
 	}
@@ -61,6 +60,70 @@ public class Pin implements Serializable {
 
 	public void setLongitude(Double longitude) {
 		this.longitude = longitude;
+	}
+
+	public String getAlias() {
+		return alias;
+	}
+
+	public void setAlias(String alias) {
+		this.alias = alias;
+	}
+
+	public String getSex() {
+		return sex;
+	}
+
+	public void setSex(String sex) {
+		this.sex = sex;
+	}
+
+	public Double getAge() {
+		return age;
+	}
+
+	public void setAge(Double age) {
+		this.age = age;
+	}
+
+	public String getSymptoms() {
+		return symptoms;
+	}
+
+	public void setSymptoms(String symptoms) {
+		this.symptoms = symptoms;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
+	public String getClimate() {
+		return climate;
+	}
+
+	public void setClimate(String climate) {
+		this.climate = climate;
+	}
+
+	public String getResult() {
+		return result;
+	}
+
+	public void setResult(String result) {
+		this.result = result;
+	}
+
+	public boolean isBroadstreetPump() {
+		return broadstreetPump;
+	}
+
+	public void setBroadstreetPump(boolean broadstreetPump) {
+		this.broadstreetPump = broadstreetPump;
 	}
 
 }

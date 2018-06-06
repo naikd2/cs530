@@ -19,7 +19,7 @@ import org.springframework.data.gemfire.repository.config.EnableGemfireRepositor
 import java.util.Arrays;
 
 @SpringBootApplication
-@ClientCacheApplication(name = "AccessingDataGemFireApplication", logLevel = "error")
+@ClientCacheApplication(name = "GemFireCache", logLevel = "error")
 @EnableEntityDefinedRegions(basePackageClasses = Report.class,
 		clientRegionShortcut = ClientRegionShortcut.LOCAL)
 @EnableGemfireRepositories
